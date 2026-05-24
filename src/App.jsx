@@ -13,7 +13,14 @@ function App() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState('comparison') // 'comparison' or 'detailed'
+  const [analyticsData, setAnalyticsData] = useState(null)
 
+  useEffect(() => {
+    fetch('/api/analytics')
+      .then((res) => res.json())
+      .then((data) => setAnalyticsData(data))
+      .catch((err) => console.error('Analytics error:', err))
+  }, [])
 
   const handleSearch = async () => {
     if (selectedCourses.length === 0 || selectedUniversities.length === 0) {
@@ -49,22 +56,38 @@ function App() {
         <p>See which colleges accept your AP scores for credit.</p>
       </header>
 
-      {/* 1. AP Course Selector Card (Updated borders, removed shadow) */}
-      <div className="card" style={{ boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+      {/* 1. AP Course Selector Card */}
+      <div
+        className="card"
+        style={{
+          boxShadow: 'none',
+          borderRadius: '10px',
+          border: '1px solid #cbd5e1'
+        }}
+      >
         <h2>
           Select Your AP Courses
         </h2>
+
         <APCourseSelector
           selectedCourses={selectedCourses}
           onChange={setSelectedCourses}
         />
       </div>
 
-      {/* 2. University Selector Card (Updated borders, removed shadow) */}
-      <div className="card" style={{ boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+      {/* 2. University Selector Card */}
+      <div
+        className="card"
+        style={{
+          boxShadow: 'none',
+          borderRadius: '10px',
+          border: '1px solid #cbd5e1'
+        }}
+      >
         <h2>
           Select Universities
         </h2>
+
         <UniversitySelector
           selectedUniversities={selectedUniversities}
           onChange={setSelectedUniversities}
@@ -72,21 +95,43 @@ function App() {
       </div>
 
       <div className="actions-bar">
-        <button className="button" onClick={handleSearch} disabled={loading}>
+        <button
+          className="button"
+          onClick={handleSearch}
+          disabled={loading}
+        >
           {loading ? 'Searching...' : 'Search Credit Policies'}
         </button>
-        <button className="button button-secondary" onClick={handleReset}>
+
+        <button
+          className="button button-secondary"
+          onClick={handleReset}
+        >
           Reset
         </button>
+
         {results.length > 0 && (
           <>
             <button
               className="button button-secondary"
-              onClick={() => setViewMode(viewMode === 'comparison' ? 'detailed' : 'comparison')}
+              onClick={() =>
+                setViewMode(
+                  viewMode === 'comparison'
+                    ? 'detailed'
+                    : 'comparison'
+                )
+              }
             >
-              {viewMode === 'comparison' ? 'Detailed View' : 'Results View'}
+              {viewMode === 'comparison'
+                ? 'Detailed View'
+                : 'Results View'}
             </button>
-            <ExportButton data={results} courses={selectedCourses} universities={selectedUniversities} />
+
+            <ExportButton
+              data={results}
+              courses={selectedCourses}
+              universities={selectedUniversities}
+            />
           </>
         )}
       </div>
@@ -95,24 +140,56 @@ function App() {
 
       {!loading && results.length > 0 && (
         viewMode === 'comparison' ? (
-          <ComparisonView results={results} courses={selectedCourses} universities={selectedUniversities} />
+          <ComparisonView
+            results={results}
+            courses={selectedCourses}
+            universities={selectedUniversities}
+          />
         ) : (
           <ResultsDisplay results={results} />
         )
       )}
 
-      {!loading && results.length === 0 && selectedCourses.length > 0 && selectedUniversities.length > 0 && (
-        <div className="empty-state">
-          <p>Click "Search Credit Policies" to see results</p>
-        </div>
-      )}
-
-    
+      {!loading &&
+        results.length === 0 &&
+        selectedCourses.length > 0 &&
+        selectedUniversities.length > 0 && (
+          <div className="empty-state">
+            <p>
+              Click "Search Credit Policies" to see results
+            </p>
+          </div>
+        )}
 
       <footer className="footer">
-        <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
+        <p
+          style={{
+            fontStyle: 'italic',
+            opacity: 0.6,
+            fontSize: '0.9rem'
+          }}
+        >
           Sourced from CollegeBoard • Mansi Viswanath
         </p>
+
+        <div
+          style={{
+            marginTop: '10px',
+            fontSize: '0.9rem',
+            opacity: 0.7
+          }}
+        >
+          <Eye
+            size={16}
+            style={{
+              display: 'inline-block',
+              marginRight: '5px',
+              verticalAlign: 'middle'
+            }}
+          />
+
+          Views: {analyticsData?.total || 'Loading...'}
+        </div>
       </footer>
     </div>
   )
