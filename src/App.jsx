@@ -137,7 +137,7 @@ function App() {
       )}
 
       {/* 3. Feedback Card (Updated borders, removed shadow) */}
-      <div className="card" style={{ marginTop: '40px', boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+     <!-- <div className="card" style={{ marginTop: '40px', boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
         <h2>
           <MessageSquare size={24} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
           Comments & Feedback
@@ -169,7 +169,7 @@ function App() {
             ))
           )}
         </div>
-      </div>
+      </div>-->
 
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
