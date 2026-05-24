@@ -13,30 +13,7 @@ function App() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState('comparison') // 'comparison' or 'detailed'
-  const [visitCount, setVisitCount] = useState(0)
 
-  useEffect(() => {
-
-    fetch('https://api.countapi.xyz/hit/ap-credit-dashboard-mansi/visits')
-
-      .then(res => res.json())
-
-      .then(data => {
-
-        setVisitCount(data.value)
-
-      })
-
-      .catch(err => {
-
-        console.error('Failed to fetch visit count:', err)
-
-        setVisitCount(0)
-
-      })
-
-    
-  }, [])
 
   const handleSearch = async () => {
     if (selectedCourses.length === 0 || selectedUniversities.length === 0) {
@@ -129,19 +106,13 @@ function App() {
         <div className="empty-state">
           <p>Click "Search Credit Policies" to see results</p>
         </div>
-      )}
-
-      {/* 3. Feedback Card (Updated borders, removed shadow) */}
-     
+      )}     
 
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
           Sourced from CollegeBoard • Mansi Viswanath
         </p>
-        <div style={{ marginTop: '10px', fontSize: '0.9rem', opacity: 0.7 }}>
-          <Eye size={16} style={{ display: 'inline-block', marginRight: '5px', verticalAlign: 'middle' }} />
-          Page Visits: {visitCount.toLocaleString()}
-        </div>
+
       </footer>
     </div>
   )
