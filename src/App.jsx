@@ -6,7 +6,6 @@ import ComparisonView from './components/ComparisonView'
 import ExportButton from './components/ExportButton'
 import { searchCreditPolicies } from './services/apCreditService'
 import { BookOpen, GraduationCap, Eye } from 'lucide-react'
-import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const [selectedCourses, setSelectedCourses] = useState([])
