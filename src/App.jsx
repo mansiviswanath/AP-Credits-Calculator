@@ -106,13 +106,13 @@ function App() {
         <div className="empty-state">
           <p>Click "Search Credit Policies" to see results</p>
         </div>
-      )}     
+      )}
 
+     
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
           Sourced from CollegeBoard • Mansi Viswanath
         </p>
-
       </footer>
     </div>
   )
