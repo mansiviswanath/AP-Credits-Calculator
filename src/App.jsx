@@ -5,7 +5,7 @@ import ResultsDisplay from './components/ResultsDisplay'
 import ComparisonView from './components/ComparisonView'
 import ExportButton from './components/ExportButton'
 import { searchCreditPolicies } from './services/apCreditService'
-import { BookOpen, GraduationCap, MessageSquare, Eye } from 'lucide-react'
+import { BookOpen, GraduationCap, Eye } from 'lucide-react'
 
 function App() {
   const [selectedCourses, setSelectedCourses] = useState([])
@@ -14,19 +14,28 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState('comparison') // 'comparison' or 'detailed'
   const [visitCount, setVisitCount] = useState(0)
-  const [comments, setComments] = useState([])
-  const [newComment, setNewComment] = useState('')
 
   useEffect(() => {
-    // Track page visits
-    const visits = parseInt(localStorage.getItem('apDashboardVisits') || '0')
-    const newVisits = visits + 1
-    localStorage.setItem('apDashboardVisits', newVisits.toString())
-    setVisitCount(newVisits)
 
-    // Load comments from localStorage
-    const savedComments = JSON.parse(localStorage.getItem('apDashboardComments') || '[]')
-    setComments(savedComments)
+    fetch('https://api.countapi.xyz/hit/ap-credit-dashboard-mansi/visits')
+
+      .then(res => res.json())
+
+      .then(data => {
+
+        setVisitCount(data.value)
+
+      })
+
+      .catch(err => {
+
+        console.error('Failed to fetch visit count:', err)
+
+        setVisitCount(0)
+
+      })
+
+    
   }, [])
 
   const handleSearch = async () => {
@@ -54,20 +63,6 @@ function App() {
     setViewMode('comparison')
   }
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault()
-    if (newComment.trim()) {
-      const comment = {
-        id: Date.now(),
-        message: newComment,
-        date: new Date().toLocaleDateString()
-      }
-      const updatedComments = [...comments, comment]
-      setComments(updatedComments)
-      localStorage.setItem('apDashboardComments', JSON.stringify(updatedComments))
-      setNewComment('')
-    }
-  }
 
   return (
     <div className="container">
@@ -137,39 +132,7 @@ function App() {
       )}
 
       {/* 3. Feedback Card (Updated borders, removed shadow) */}
-     <!-- <div className="card" style={{ marginTop: '40px', boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
-        <h2>
-          <MessageSquare size={24} style={{ display: 'inline-block', marginRight: '8px', verticalAlign: 'middle' }} />
-          Comments & Feedback
-        </h2>
-        <form onSubmit={handleCommentSubmit} style={{ marginBottom: '20px' }}>
-          <div className="input-group">
-            <label>Your Feedback:</label>
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Share feedback/suggestions here!"
-              className="comment-textarea"
-              rows="3"
-              required
-            />
-          </div>
-          <button type="submit" className="button">Post Comment</button>
-        </form>
-
-        <div className="comments-list">
-          {comments.length === 0 ? (
-            <p style={{ opacity: 0.6, textAlign: 'center' }}>No comments yet. Be the first to share your thoughts!</p>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                <div style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: '8px' }}>{comment.date}</div>
-                <div>{comment.message}</div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>-->
+     
 
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
