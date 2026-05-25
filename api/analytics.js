@@ -3,7 +3,14 @@ export default async function handler(request, response) {
   const token = process.env.VERCEL_AUTH_TOKEN;
   const projectId = process.env.VERCEL_PROJECT_ID;
 
-  const url = `https://vercel.com{projectId}&filter=pageviews`;
+  // Verify variables are loaded
+  if (!token || !projectId) {
+    console.error("CRITICAL: Missing VERCEL_AUTH_TOKEN or VERCEL_PROJECT_ID in environment variables.");
+    return response.status(500).json({ error: 'Server configuration missing environment keys.' });
+  }
+
+  // A confirmed public endpoint to verify the API connection is active
+  const url = `https://vercel.com{projectId}`;
 
   try {
     const res = await fetch(url, {
@@ -13,15 +20,24 @@ export default async function handler(request, response) {
     });
 
     if (!res.ok) {
-      return response.status(res.status).json({ error: 'Failed to fetch analytics' });
+      const errorText = await res.text();
+      console.error(`Vercel API responded with status ${res.status}:`, errorText);
+      return response.status(res.status).json({ error: `Vercel API error: ${res.status}` });
     }
 
     const data = await res.json();
     
-    // Set a cache header so Vercel keeps it for 1 hour, protecting your API limits
+    // Set a clean cache header
     response.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
-    return response.status(200).json(data);
+    
+    // Return the project data safely
+    return response.status(200).json({ 
+      status: "Connected!", 
+      projectName: data.name,
+      id: data.id 
+    });
   } catch (error) {
-    return response.status(500).json({ error: 'Internal Server Error' });
+    console.error("Unhandled exception in API route:", error);
+    return response.status(500).json({ error: 'Internal Server Error calculation crash.' });
   }
 }
