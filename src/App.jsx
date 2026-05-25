@@ -13,13 +13,22 @@ function App() {
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
   const [viewMode, setViewMode] = useState('comparison') // 'comparison' or 'detailed'
-  const [analyticsData, setAnalyticsData] = useState(null)
+
+  // Analytics state
+  const [siteData, setSiteData] = useState(null)
+  const [analyticsLoading, setAnalyticsLoading] = useState(true)
 
   useEffect(() => {
     fetch('/api/analytics')
       .then((res) => res.json())
-      .then((data) => setAnalyticsData(data))
-      .catch((err) => console.error('Analytics error:', err))
+      .then((data) => {
+        setSiteData(data)
+        setAnalyticsLoading(false)
+      })
+      .catch((err) => {
+        console.error('Fetch failure:', err)
+        setAnalyticsLoading(false)
+      })
   }, [])
 
   const handleSearch = async () => {
@@ -29,11 +38,17 @@ function App() {
     }
 
     setLoading(true)
+
     try {
-      const searchResults = await searchCreditPolicies(selectedCourses, selectedUniversities)
+      const searchResults = await searchCreditPolicies(
+        selectedCourses,
+        selectedUniversities
+      )
+
       setResults(searchResults)
     } catch (error) {
       console.error('Error fetching credit policies:', error)
+
       alert('Error fetching credit policies. Please try again.')
     } finally {
       setLoading(false)
@@ -53,7 +68,10 @@ function App() {
         <h1>
           AP Credits Calculator
         </h1>
-        <p>See which colleges accept your AP scores for credit.</p>
+
+        <p>
+          See which colleges accept your AP scores for credit.
+        </p>
       </header>
 
       {/* 1. AP Course Selector Card */}
@@ -174,21 +192,58 @@ function App() {
 
         <div
           style={{
-            marginTop: '10px',
-            fontSize: '0.9rem',
-            opacity: 0.7
+            marginTop: '15px',
+            padding: '12px',
+            border: '1px solid #cbd5e1',
+            borderRadius: '8px',
+            backgroundColor: '#f8fafc',
+            fontSize: '0.9rem'
           }}
         >
-          <Eye
-            size={16}
-            style={{
-              display: 'inline-block',
-              marginRight: '5px',
-              verticalAlign: 'middle'
-            }}
-          />
+          {analyticsLoading ? (
+            <p>Views: Loading...</p>
+          ) : siteData?.error ? (
+            <p>Error loading specs: {siteData.error}</p>
+          ) : (
+            <>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  marginBottom: '10px'
+                }}
+              >
+                <Eye
+                  size={16}
+                  style={{
+                    marginRight: '6px'
+                  }}
+                />
 
-          Views: {analyticsData?.total || 'Loading...'}
+                <strong>
+                  Views: {siteData?.total || 0}
+                </strong>
+              </div>
+
+              <h3
+                style={{
+                  marginBottom: '8px'
+                }}
+              >
+                Vercel Connection Status:
+              </h3>
+
+              <p>
+                <strong>Project:</strong>{' '}
+                {siteData?.projectName}
+              </p>
+
+              <p>
+                <strong>Framework Build:</strong>{' '}
+                {siteData?.framework}
+              </p>
+            </>
+          )}
         </div>
       </footer>
     </div>
