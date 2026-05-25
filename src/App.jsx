@@ -12,11 +12,14 @@ function App() {
   const [selectedUniversities, setSelectedUniversities] = useState([])
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
-  const [viewMode, setViewMode] = useState('comparison') // 'comparison' or 'detailed'
+  const [viewMode, setViewMode] = useState('comparison')
 
-  // Analytics state
+  // Analytics state (existing)
   const [siteData, setSiteData] = useState(null)
   const [analyticsLoading, setAnalyticsLoading] = useState(true)
+
+  // NEW: Live page views state
+  const [views, setViews] = useState("Loading...")
 
   useEffect(() => {
     fetch('/api/analytics')
@@ -28,6 +31,19 @@ function App() {
       .catch((err) => {
         console.error('Fetch failure:', err)
         setAnalyticsLoading(false)
+      })
+  }, [])
+
+  // NEW: Moondb page view tracker
+  useEffect(() => {
+    fetch('https://moondb.org')
+      .then((res) => res.json())
+      .then((data) => {
+        setViews(data.value || 1)
+      })
+      .catch((err) => {
+        console.error("Tracker error:", err)
+        setViews("Unavailable")
       })
   }, [])
 
@@ -48,7 +64,6 @@ function App() {
       setResults(searchResults)
     } catch (error) {
       console.error('Error fetching credit policies:', error)
-
       alert('Error fetching credit policies. Please try again.')
     } finally {
       setLoading(false)
@@ -65,47 +80,22 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>
-          AP Credits Calculator
-        </h1>
-
-        <p>
-          See which colleges accept your AP scores for credit.
-        </p>
+        <h1>AP Credits Calculator</h1>
+        <p>See which colleges accept your AP scores for credit.</p>
       </header>
 
-      {/* 1. AP Course Selector Card */}
-      <div
-        className="card"
-        style={{
-          boxShadow: 'none',
-          borderRadius: '10px',
-          border: '1px solid #cbd5e1'
-        }}
-      >
-        <h2>
-          Select Your AP Courses
-        </h2>
-
+      {/* AP Course Selector */}
+      <div className="card" style={{ boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+        <h2>Select Your AP Courses</h2>
         <APCourseSelector
           selectedCourses={selectedCourses}
           onChange={setSelectedCourses}
         />
       </div>
 
-      {/* 2. University Selector Card */}
-      <div
-        className="card"
-        style={{
-          boxShadow: 'none',
-          borderRadius: '10px',
-          border: '1px solid #cbd5e1'
-        }}
-      >
-        <h2>
-          Select Universities
-        </h2>
-
+      {/* University Selector */}
+      <div className="card" style={{ boxShadow: 'none', borderRadius: '10px', border: '1px solid #cbd5e1' }}>
+        <h2>Select Universities</h2>
         <UniversitySelector
           selectedUniversities={selectedUniversities}
           onChange={setSelectedUniversities}
@@ -113,18 +103,11 @@ function App() {
       </div>
 
       <div className="actions-bar">
-        <button
-          className="button"
-          onClick={handleSearch}
-          disabled={loading}
-        >
+        <button className="button" onClick={handleSearch} disabled={loading}>
           {loading ? 'Searching...' : 'Search Credit Policies'}
         </button>
 
-        <button
-          className="button button-secondary"
-          onClick={handleReset}
-        >
+        <button className="button button-secondary" onClick={handleReset}>
           Reset
         </button>
 
@@ -133,16 +116,10 @@ function App() {
             <button
               className="button button-secondary"
               onClick={() =>
-                setViewMode(
-                  viewMode === 'comparison'
-                    ? 'detailed'
-                    : 'comparison'
-                )
+                setViewMode(viewMode === 'comparison' ? 'detailed' : 'comparison')
               }
             >
-              {viewMode === 'comparison'
-                ? 'Detailed View'
-                : 'Results View'}
+              {viewMode === 'comparison' ? 'Detailed View' : 'Results View'}
             </button>
 
             <ExportButton
@@ -156,8 +133,8 @@ function App() {
 
       {loading && <div className="loader"></div>}
 
-      {!loading && results.length > 0 && (
-        viewMode === 'comparison' ? (
+      {!loading && results.length > 0 &&
+        (viewMode === 'comparison' ? (
           <ComparisonView
             results={results}
             courses={selectedCourses}
@@ -165,31 +142,40 @@ function App() {
           />
         ) : (
           <ResultsDisplay results={results} />
-        )
-      )}
+        ))}
 
       {!loading &&
         results.length === 0 &&
         selectedCourses.length > 0 &&
         selectedUniversities.length > 0 && (
           <div className="empty-state">
-            <p>
-              Click "Search Credit Policies" to see results
-            </p>
+            <p>Click "Search Credit Policies" to see results</p>
           </div>
         )}
 
       <footer className="footer">
-        <p
-          style={{
-            fontStyle: 'italic',
-            opacity: 0.6,
-            fontSize: '0.9rem'
-          }}
-        >
+        <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
           Sourced from CollegeBoard • Mansi Viswanath
         </p>
 
+        {/* NEW: Live Views Section */}
+        <div
+          style={{
+            marginTop: '15px',
+            padding: '12px',
+            border: '1px solid #cbd5e1',
+            borderRadius: '8px',
+            backgroundColor: '#f8fafc',
+            fontSize: '0.9rem'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+            <Eye size={16} style={{ marginRight: '6px' }} />
+            <strong>Total Page Views: {views}</strong>
+          </div>
+        </div>
+
+        {/* Existing Analytics Panel */}
         <div
           style={{
             marginTop: '15px',
@@ -206,41 +192,14 @@ function App() {
             <p>Error loading specs: {siteData.error}</p>
           ) : (
             <>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginBottom: '10px'
-                }}
-              >
-                <Eye
-                  size={16}
-                  style={{
-                    marginRight: '6px'
-                  }}
-                />
-
-                <strong>
-                  Views: {siteData?.total || 0}
-                </strong>
-              </div>
-
-              <h3
-                style={{
-                  marginBottom: '8px'
-                }}
-              >
-                Vercel Connection Status:
-              </h3>
+              <h3 style={{ marginBottom: '8px' }}>Vercel Connection Status:</h3>
 
               <p>
-                <strong>Project:</strong>{' '}
-                {siteData?.projectName}
+                <strong>Project:</strong> {siteData?.projectName}
               </p>
 
               <p>
-                <strong>Framework Build:</strong>{' '}
-                {siteData?.framework}
+                <strong>Framework Build:</strong> {siteData?.framework}
               </p>
             </>
           )}
