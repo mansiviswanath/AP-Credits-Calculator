@@ -1,18 +1,19 @@
 // api/analytics.js
-module.exports = async (req, res) => {
+
+// Force Vercel to explicitly treat this as a modern Node.js 18+ serverless function
+export const config = {
+  runtime: 'nodejs',
+};
+
+export default async function handler(req, res) {
   try {
-    // We set a clean response status code
-    res.statusCode = 200;
-    
-    // We send back static data immediately to check the pipeline
-    return res.json({
+    // Return a clean 200 OK status
+    return res.status(200).json({
       projectName: "Pipeline Connected!",
-      framework: "Vite + React Test Running",
+      framework: "Vite Modern Setup Running",
       updatedAt: Date.now()
     });
-
   } catch (error) {
-    // Standard server failure response
-    return res.statusCode = 500;
+    return res.status(500).json({ error: "Server crashed internally." });
   }
-};
+}
