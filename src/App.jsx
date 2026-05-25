@@ -155,7 +155,10 @@ function App() {
 
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
-          Sourced from CollegeBoard • Mansi Viswanath\n
+          Sourced from CollegeBoard • Mansi Viswanath
+        </p>
+
+        <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
           Total Page Views: 54
         </p>
    
