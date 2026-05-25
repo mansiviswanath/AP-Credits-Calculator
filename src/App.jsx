@@ -155,25 +155,10 @@ function App() {
 
       <footer className="footer">
         <p style={{ fontStyle: 'italic', opacity: 0.6, fontSize: '0.9rem' }}>
-          Sourced from CollegeBoard • Mansi Viswanath
+          Sourced from CollegeBoard • Mansi Viswanath\n
+          Total Page Views: 54
         </p>
-
-        {/* NEW: Live Views Section */}
-        <div
-          style={{
-            marginTop: '15px',
-            padding: '12px',
-            border: '1px solid #cbd5e1',
-            borderRadius: '8px',
-            backgroundColor: '#f8fafc',
-            fontSize: '0.9rem'
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-            <Eye size={16} style={{ marginRight: '6px' }} />
-            <strong>Total Page Views: 54</strong>
-          </div>
-        </div>        
+   
       </footer>
     </div>
   )
