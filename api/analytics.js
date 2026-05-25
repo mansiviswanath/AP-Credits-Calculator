@@ -1,7 +1,7 @@
 // api/analytics.js
 export default async function handler(request, response) {
-  const token = process.env.VERCEL_AUTH_TOKEN;
-  const projectId = process.env.VERCEL_PROJECT_ID;
+  const token = process.env.MY_ANALYTICS_KEY;
+  const projectId = process.env.MY_ANALYTICS_ID;
 
   // Verify variables are loaded
   if (!token || !projectId) {
