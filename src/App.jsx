@@ -173,37 +173,7 @@ function App() {
             <Eye size={16} style={{ marginRight: '6px' }} />
             <strong>Total Page Views: {views}</strong>
           </div>
-        </div>
-
-        {/* Existing Analytics Panel */}
-        <div
-          style={{
-            marginTop: '15px',
-            padding: '12px',
-            border: '1px solid #cbd5e1',
-            borderRadius: '8px',
-            backgroundColor: '#f8fafc',
-            fontSize: '0.9rem'
-          }}
-        >
-          {analyticsLoading ? (
-            <p>Views: Loading...</p>
-          ) : siteData?.error ? (
-            <p>Error loading specs: {siteData.error}</p>
-          ) : (
-            <>
-              <h3 style={{ marginBottom: '8px' }}>Vercel Connection Status:</h3>
-
-              <p>
-                <strong>Project:</strong> {siteData?.projectName}
-              </p>
-
-              <p>
-                <strong>Framework Build:</strong> {siteData?.framework}
-              </p>
-            </>
-          )}
-        </div>
+        </div>        
       </footer>
     </div>
   )
