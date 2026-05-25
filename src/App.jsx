@@ -171,7 +171,7 @@ function App() {
         >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
             <Eye size={16} style={{ marginRight: '6px' }} />
-            <strong>Total Page Views: {views}</strong>
+            <strong>Total Page Views: 54</strong>
           </div>
         </div>        
       </footer>
